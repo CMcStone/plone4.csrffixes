@@ -52,6 +52,7 @@ class Protect4Transform(ProtectTransform):
     order = 8889
 
     site = None
+    cas_url = 'https://cas.ucdavis.edu'
     key_manager = None
     safe_views = (
         'plone_lock_operations',
@@ -119,10 +120,14 @@ class Protect4Transform(ProtectTransform):
         if referrer:
             if referrer.startswith(site_url + '/'):
                 alsoProvides(self.request, IDisableCSRFProtection)
+            elif referrer.startswith(cas_url + '/'):
+                alsoProvides(self.request, IDisableCSRFProtection)
         else:
             origin = self.request.environ.get('HTTP_ORIGIN')
             if origin and origin == site_url:
                 alsoProvides(self.request, IDisableCSRFProtection)
+            elif 'casweb' in origin and origin:
+                alsoProvides(self.requet, IDisableCSRFProtection)
 
     def transform(self, result, encoding):
 
